@@ -85,7 +85,6 @@ func listLogGroups(retention int64, apply bool, namePattern string) {
 	noRetentionSet := false
 
 	for _, group := range cloudwatchGroups {
-		//LogGroupName := "/aws/lambda/cilogging20/error-logs"
 		match, _:= regexp.MatchString(namePattern, *group.LogGroupName)
 		if match {
 			totalLogByteSize = totalLogByteSize + *group.StoredBytes
@@ -104,7 +103,7 @@ func listLogGroups(retention int64, apply bool, namePattern string) {
 				}
 				log.Printf("Retention policy for %s was set to %v", *group.LogGroupName, retention)
 			} else {
-				log.Printf("Group %s retention policy would be set to %d (size is %v Bytes), --yes to apply", *group.LogGroupName, retention, *group.StoredBytes)
+				log.Printf("Group %s retention policy would be set to %d (size is %v Bytes), --apply to set", *group.LogGroupName, retention, *group.StoredBytes)
 			}
 		}
 	}
@@ -131,5 +130,6 @@ func init() {
 	// is called directly, e.g.:
 	cwListCmd.Flags().BoolP("apply", "y", false, "Update loggroup")
 	cwListCmd.Flags().Int64P("retention","r", 1, "Default retention days.")
-	cwListCmd.Flags().String("name", "/aws/lambda/cilogging20-", "Log group name prefix pattern." )
+	cwListCmd.Flags().String("name-filter", "", "Log group name prefix pattern." )
+	cwListCmd.MarkFlagRequired("name-filter")
 }
